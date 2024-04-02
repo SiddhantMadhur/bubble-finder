@@ -17,19 +17,25 @@ fn main() {
 
 
     let term = Term::stdout();
-    
+
     let mut input = String::new();
+
+
+    let mut filtered_arr = filter(&files, &input);
+    let mut highlighted_index = filtered_arr.len()-1;
 
     loop {
         print!("{}[2J", 27 as char);
 
-        let filtered_arr = filter(&files, &input);
+        filtered_arr = filter(&files, &input);
+        let mut cur = 0;
         for file in &filtered_arr  {
-            if file == filtered_arr.last().unwrap() {
+            if cur == highlighted_index {
                 println!("{}{}", " > ".green() ,&file.green());
             } else {
                 println!(" > {}", &file);
             }
+            cur += 1;
         }
 
         println!("\n ({}/{})\n\n > {} ", &filtered_arr.len(), &files.len(), &input);
@@ -38,14 +44,24 @@ fn main() {
         match key {
             console::Key::Char(c) => {
                 input = input + &c.to_string(); 
+                filtered_arr = filter(&files, &input);
+                highlighted_index = filtered_arr.len()-1;
             } ,
             console::Key::Backspace => {
                 if input.len() > 0 {
                     input.truncate(input.len() - 1);
                 }
+                filtered_arr = filter(&files, &input);
+                highlighted_index = filtered_arr.len()-1;
             },
             console::Key::Enter => {
                 exit(1);
+            },
+            console::Key::ArrowUp => {
+                highlighted_index -= 1;
+            },
+            console::Key::ArrowDown => {
+                highlighted_index += 1;
             },
             _ => (),
         }
