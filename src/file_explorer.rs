@@ -11,7 +11,7 @@ fn is_hidden(entry: &walkdir::DirEntry) -> bool {
 }
 
 
-pub fn get_all_files(config: Config) -> Vec<String> {
+pub fn get_all_files(config: &Config) -> Vec<String> {
 
     let mut git_projects = vec![];
     
@@ -35,10 +35,6 @@ pub fn get_all_files(config: Config) -> Vec<String> {
                 Err(_) => () 
             }
         };
-    }
-
-    for prj in &git_projects {
-        println!("Prj: {}", prj);
     }
 
     git_projects
