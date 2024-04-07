@@ -67,8 +67,9 @@ fn main() {
                 console::Key::Enter => {
                     capture_output = false;
                     execute!(stdout(), EnterAlternateScreen).unwrap();
+                    let dir = filtered_arr.get(0).unwrap();
                     let tmux_session = Command::new("tmux")
-                        .arg("new")
+                        .args(["new", "-A", "-s", dir.as_str(), "-c", dir.as_str()])
                         .stdout(Stdio::piped())
                         .stderr(Stdio::piped())
                         .spawn()
