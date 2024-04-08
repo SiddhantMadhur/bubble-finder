@@ -1,4 +1,4 @@
-use std::{any::Any, io::{self, stdin, stdout, Read, Write}, process::{self, exit, Command, Stdio}, u8, usize};
+use std::{any::Any, env::args, io::{self, stdin, stdout, Read, Write}, process::{self, exit, Command, Stdio}, u8, usize};
 
 use colored::Colorize;
 use console::Term;
@@ -10,6 +10,16 @@ mod file_explorer;
 mod config;
 
 fn main() {
+
+    let args = args();
+    if args.len() > 1 {
+        let arg = args.into_iter().last().unwrap(); 
+        match arg.as_str() {
+            "-v" => println!("Straw\nVersion: 2.0-alpha"),
+            _ => println!("Argument {} not recognized.", arg) 
+        }
+        std::process::exit(0);
+    }
     let cfg = config::new();    
     let files = file_explorer::get_all_files(&cfg); 
 
