@@ -2,7 +2,7 @@ use std::{any::Any, env::args, io::{self, stdin, stdout, Read, Write}, process::
 
 use colored::Colorize;
 use console::Term;
-use crossterm::{cursor::Hide, execute, terminal::{Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen}, ExecutableCommand};
+use crossterm::{cursor::{Hide, Show}, execute, terminal::{Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen}, ExecutableCommand};
 
 
 
@@ -109,6 +109,7 @@ fn main() {
 
     }
 
+    execute!(stdout(), Show).unwrap();
     print!("\x1B[2J\x1B[1;1H");
 }
 
