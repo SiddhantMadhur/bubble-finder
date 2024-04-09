@@ -34,7 +34,6 @@ fn main() {
     let mut filtered_arr = filter(&files, &input);
 
     while capture_output {
-
         term.flush().unwrap();
 
         let (row, _) = term.size();
@@ -106,7 +105,7 @@ fn main() {
         }
 
     }
-
+    term.clear_screen().unwrap();
 }
 
 
