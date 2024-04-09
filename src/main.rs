@@ -49,7 +49,7 @@ fn main() {
                 output += format!("\n").as_str();
             } else if filtered_arr.len() > 0{
                 if cursor == user_cursor + 1 {
-                    output = output + format!("> {} \n", &filtered_arr.get(usize::from(cursor - 1)).unwrap().clone().green()).as_str();
+                    output = output + format!("> {} \n", &filtered_arr.get(usize::from(cursor - 1)).unwrap().clone().dark_green()).as_str();
                 } else {
                     output = output + (format!("  {} \n", &filtered_arr.get(usize::from(cursor - 1)).unwrap())).as_str();
                 }
@@ -58,7 +58,7 @@ fn main() {
         }
         output += format!("\n").as_str();
         output += format!("  {}/{} \n", &filtered_arr.len(), files.len()).as_str();
-        output += format!("Search: {} \n",  input).as_str();
+        output += format!("  Search: {} \n",  input).as_str();
         
         term.execute(Print(output)).unwrap();
 
