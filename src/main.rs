@@ -1,8 +1,8 @@
-use std::{any::Any, env::args, io::{self, stdin, stdout, Read, Write}, process::{self, exit, Command, Stdio}, u8, usize};
+use std::{any::Any, env::args, io::{stdout, Write}, process::{Command, Stdio}, u8, usize};
 
 use colored::Colorize;
 use console::Term;
-use crossterm::{cursor::{Hide, Show}, execute, terminal::{Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen}, ExecutableCommand};
+use crossterm::{cursor::{Hide, Show}, execute, queue, style::{Print, PrintStyledContent, Stylize}, terminal::{Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen}, ExecutableCommand, QueueableCommand};
 
 
 
@@ -24,11 +24,8 @@ fn main() {
     let files = file_explorer::get_all_files(&cfg); 
 
 
-
     let mut capture_output = true;
-    let term = Term::stdout();
-
-    execute!(stdout(), Hide).unwrap();
+    let mut term = Term::stdout();
     
     let mut input = String::new();
 
@@ -38,31 +35,32 @@ fn main() {
 
     while capture_output {
 
-        term.clear_screen().unwrap();
+        term.flush().unwrap();
 
         let (row, _) = term.size();
         
-        let entry_size = row - 3;
+        let entry_size = row - 4;
         filtered_arr = filter(&files, &input);
         let mut idx = 0;
-
-        while idx < entry_size {
+        let mut output = String::from("");
+        while idx < entry_size  {
             let cursor = entry_size - idx;
             if usize::from(cursor) > filtered_arr.len()   {
-                print!("\n");
+                output += format!("\n").as_str();
             } else if filtered_arr.len() > 0{
                 if cursor == user_cursor + 1 {
-                    print!("> {} \n", &filtered_arr.get(usize::from(cursor - 1)).unwrap().green());
+                    output = output + format!("> {} \n", &filtered_arr.get(usize::from(cursor - 1)).unwrap().clone().green()).as_str();
                 } else {
-                    print!("  {} \n", &filtered_arr.get(usize::from(cursor - 1)).unwrap());
+                    output = output + (format!("  {} \n", &filtered_arr.get(usize::from(cursor - 1)).unwrap())).as_str();
                 }
             }
             idx += 1; 
         }
-        print!("  {}/{} \n", &filtered_arr.len(), files.len());
-        print!("> {} \n",  input);
-
-
+        output += format!("\n").as_str();
+        output += format!("  {}/{} \n", &filtered_arr.len(), files.len()).as_str();
+        output += format!("Search: {} \n",  input).as_str();
+        
+        term.execute(Print(output)).unwrap();
 
         let key = term.read_key().unwrap();
         match key {
@@ -100,7 +98,7 @@ fn main() {
 
             },
             console::Key::ArrowUp => {
-                if (user_cursor < entry_size) && usize::from(user_cursor) < filtered_arr.len() {
+                if (user_cursor < entry_size-1) && usize::from(user_cursor) < filtered_arr.len()-1 {
                     user_cursor += 1;
                 }
             },
@@ -109,8 +107,6 @@ fn main() {
 
     }
 
-    execute!(stdout(), Show).unwrap();
-    print!("\x1B[2J\x1B[1;1H");
 }
 
 
