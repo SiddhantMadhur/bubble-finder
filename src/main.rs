@@ -15,7 +15,7 @@ fn main() {
     if args.len() > 1 {
         let arg = args.into_iter().last().unwrap(); 
         match arg.as_str() {
-            "-v" => println!("Straw\nVersion: 2.0-alpha"),
+            "-v" => println!("Straw\nVersion: 2.5-alpha"),
             _ => println!("Argument {} not recognized.", arg) 
         }
         std::process::exit(0);
@@ -38,6 +38,7 @@ fn main() {
 
     while capture_output {
         term.flush().unwrap();
+        term.clear_to_end_of_screen().unwrap();
 
         let (row, _) = term.size();
         
@@ -61,9 +62,8 @@ fn main() {
         output += format!("\n").as_str();
         output += format!("  {}/{} in {:?} \n", &filtered_arr.len(), files.len(), elapsed_time).as_str();
         output += format!("  Search: {} \n",  input).as_str();
-        
         term.execute(Print(output)).unwrap();
-
+        term.move_cursor_up(1);
         let key = term.read_key().unwrap();
         match key {
             console::Key::Char(c) => {
@@ -116,7 +116,7 @@ fn main() {
 fn filter(arr: &Vec<String>, filter_str: &String) -> Vec<String> {
     let mut proc: Vec<String> = vec![];
     for i in arr.iter() {
-        if i.contains(filter_str) {
+        if i.to_lowercase().contains(&filter_str.to_lowercase()) {
             proc.push(i.to_string());
         }
     }
