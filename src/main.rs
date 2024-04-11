@@ -1,4 +1,4 @@
-use std::{any::Any, env::args, io::{stdout, Write}, process::{Command, Stdio}, u8, usize};
+use std::{any::Any, env::args, io::{stdout, Write}, ops::Sub, process::{Command, Stdio}, time, u8, usize};
 
 use colored::Colorize;
 use console::Term;
@@ -21,7 +21,10 @@ fn main() {
         std::process::exit(0);
     }
     let cfg = config::new();    
+
+    let start_time = time::Instant::now();
     let files = file_explorer::get_all_files(&cfg); 
+    let elapsed_time = time::Instant::now() - start_time;
 
 
     let mut capture_output = true;
@@ -56,7 +59,7 @@ fn main() {
             idx += 1; 
         }
         output += format!("\n").as_str();
-        output += format!("  {}/{} \n", &filtered_arr.len(), files.len()).as_str();
+        output += format!("  {}/{} in {:?} \n", &filtered_arr.len(), files.len(), elapsed_time).as_str();
         output += format!("  Search: {} \n",  input).as_str();
         
         term.execute(Print(output)).unwrap();
